@@ -1,39 +1,71 @@
 f = open("input.txt", "r").read()
 
-
-pattern_r = 3 # Pattern for going to the right
-pattern_d = 1 # Pattern for going down
-
 tree = "#"
-trees = 0
 
 split_f = []
 
 for idx, line in enumerate(f.splitlines()):
     split_f.append(line)
 
-current_r = 0
-current_d = 0
-for idx, line in enumerate(split_f):
 
-    current_r += pattern_r
-    current_d += pattern_d
+def run_slope(pattern_r, pattern_d):
 
-    valid_check = False
+    trees = 0
+    current_r = 0
+    current_d = 0
+    for idx, line in enumerate(split_f):
 
-    while valid_check == False:
-        try:
+        current_r += pattern_r
+        current_d += pattern_d
 
-            if split_f[current_d][current_r] == tree:
-                trees += 1
-            else:
-                pass
+        valid_check = False
 
-            valid_check = True
-        except IndexError:
+        while valid_check == False:
             try:
-                split_f[current_d] += split_f[current_d]
-            except IndexError:
-                break
 
-print(trees)
+                if split_f[current_d][current_r] == tree:
+                    trees += 1
+                else:
+                    pass
+
+                valid_check = True
+            except IndexError:
+                try:
+                    split_f[current_d] += split_f[current_d]
+                except IndexError:
+                    break
+
+    return trees
+
+# 1
+print(run_slope(3, 1))
+
+# 2
+slopes = {
+    1: {"right": 1, "down": 1},
+    2: {"right": 3, "down": 1},
+    3: {"right": 5, "down": 1},
+    4: {"right": 7, "down": 1},
+    5: {"right": 1, "down": 2}
+}
+
+results = []
+for i in list(range(1, (len(slopes)+1))):
+    number = i
+    right = slopes[i]["right"]
+    down = slopes[i]["down"]
+
+    result = run_slope(right, down)
+    results.append(result)
+
+# https://www.geeksforgeeks.org/python-multiply-numbers-list-3-different-ways/
+def multiplyList(myList) :
+     
+    # Multiply elements one by one
+    result = 1
+    for x in myList:
+         result = result * x 
+    return result 
+
+answer = multiplyList(results)
+print(answer)
