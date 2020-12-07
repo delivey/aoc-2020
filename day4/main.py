@@ -1,4 +1,4 @@
-import string
+from string import ascii_lowercase
 
 f = open("input.txt", "r").read()
 
@@ -8,10 +8,10 @@ valids = 0
 
 # 1
 
-for i in passports:
+for passport in passports:
 
-    i = i.replace("\n", " ")
-    pairs = i.split(" ")
+    passport = passport.replace("\n", " ")
+    pairs = passport.split(" ")
 
     needed_keys = ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"]
 
@@ -32,19 +32,18 @@ for i in passports:
         
 print(valids)
 
-
-new_valids = 0
 # 2
+new_valids = 0
 
-for i in passports:
+for passport in passports:
 
-    i = i.replace("\n", " ")
-    pairs = i.split(" ")
+    passport = passport.replace("\n", " ")
+    pairs = passport.split(" ")
 
     needed_keys = ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"]
 
-    items = []
     keys = []
+    items = []
 
     for pair in pairs:
         key = pair.split(":")[0]
@@ -58,6 +57,7 @@ for i in passports:
         if needed_key not in keys:
             invalid = True
 
+
     # Parameters for checking if a passport is valid
     valids = {
         "byr": {"len": 4, "min": 1920, "max": 2002},
@@ -66,7 +66,7 @@ for i in passports:
         "hgt": {"start_type": "int"},
         "hcl": {"len": 7, "start": "#", "end_type": "chars"},
         "ecl": {"possible": ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"]},
-        "pid": {"len": 9, "start": "0"},
+        "pid": {"pid": True},
         "cid": {}
     }
 
@@ -81,69 +81,86 @@ for i in passports:
             if len(value) != length:
                 invalid = True
         except KeyError:
-            length = False
+            pass
 
         try:
             minn = valid_data["min"]
-            if int(value) < minn:
+            if value.isnumeric():
+                if int(value) < minn:
+                    invalid = True
+            else:
                 invalid = True
         except KeyError:
-            minn = False
+            pass
 
         try:
             maxn = valid_data["max"]
-            if int(value) > maxn:
+            if value.isnumeric():
+                if int(value) > maxn:
+                    invalid = True
+            else:
                 invalid = True
         except KeyError:
-            maxn = False
+            pass
 
         try: # For hgt (height)
             start_type = valid_data["start_type"]
-            clean_string = (value.replace("cm", "").replace("in", ""))
-            if clean_string.isnumeric():
-                if "cm" in value:
-                    if int(clean_string) > 150 and int(clean_string) < 193:
+            unit = value[-2:]
+            clean = value[:-2]
+            if clean.isnumeric():
+                clean = int(clean)
+                if unit == "cm":
+                    if clean >= 150 and clean <= 193:
                         pass
                     else:
                         invalid = True
-                if "in" in value:
-                    if int(clean_string) > 59 and int(clean_string) < 76:
+                elif unit == "in":
+                    if clean >= 59 and clean <= 76:
                         pass
                     else:
                         invalid = True
                 else:
                     invalid = True
-            
-
         except KeyError:
-            start_type = False
+            pass
 
         try:
             start = valid_data["start"]
-            if not value.startswith(start):
+            if not value[0] == start:
                 invalid = True
         except KeyError:
-            start = False
+            pass
 
         try:
             end_type = valid_data["end_type"] # chars
             last_6 = value[-6:]
 
             for i in last_6:
-                if i not in list(range(0, 10)) or i not in list(string.ascii_lowercase):
+                if not i in ascii_lowercase and not i.isnumeric():
                     invalid = True
         except KeyError:
-            end_type = False
+            pass
 
         try:
             possible = valid_data["possible"]
             if value not in possible:
                 invalid = True
         except KeyError:
-            possible = False
+            pass
 
-        if not invalid:
-            new_valids += 1
+        try:
+            pid = valid_data["pid"]
+
+            if len(value) != 9:
+                invalid = True
+
+            if not value.isnumeric():
+                invalid = True
+        except KeyError:
+            pass
+
+    if not invalid:
+        new_valids += 1
 
 
 print(new_valids)
