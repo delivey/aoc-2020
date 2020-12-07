@@ -1,5 +1,6 @@
 f = open("input.txt", "r").readlines()
 
+# 1
 seat_ids = []
 for string in f:
     string = string.replace("\n", "")
@@ -29,7 +30,16 @@ for string in f:
             column = c_mx
 
     seat_id = row * 8 + column
-    print(row, column, seat_id)
+    # print(row, column, seat_id)
     seat_ids.append(seat_id)
 
-print(max(seat_ids))
+# print(max(seat_ids))
+
+# 2
+
+start = 100
+end = max(seat_ids) - 100
+
+for i in range(start, end):
+    if i not in seat_ids:
+        print(i)
